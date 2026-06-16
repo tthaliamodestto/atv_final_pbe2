@@ -21,7 +21,7 @@ const produtoController = {
             const idProduto = req.params.idProduto;
             const { idCategoria, nomeProduto, descricaoProduto, preco, estoque } = req.body;
 
-            const produto = Produto.alterar({ idCategoria, nomeProduto, descricaoProduto, preco, estoque, imagem: null }, idProduto);
+            const produto = Produto.alterar({ idCategoria, nomeProduto, descricaoProduto, preco, estoque }, idProduto);
             const result = await produtoRepository.editar(produto);
 
             res.status(200).json({ result });

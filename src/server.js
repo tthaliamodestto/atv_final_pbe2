@@ -1,21 +1,17 @@
-import 'dotenv/config';
 import express from 'express';
-import routes from './routes/routes.js';
-import { initializeDatabase } from './configs/Database.js';
-// import cors from 'cors';
+import produtoRoutes from './routes/produtoRoutes.js';
+import categoriaRoutes from './routes/categoriaRoutes.js';
+import pedidoRoutes from './routes/pedidoRoutes.js';
 
 const app = express();
-
-
-// app.use('/uploads', express.static('uploads'));
-
 app.use(express.json());
-app.use('/', routes);
 
-initializeDatabase().then(() => {
-    app.listen(process.env.SERVER_PORT, () => {
-        console.log(`Servidor rodando na porta ${process.env.SERVER_PORT}`);
-    });
-}).catch(err => {
-    console.error("Erro ao inicializar o banco de dados:", err);
-});
+// Vinculando as rotas
+app.use('/produtos', produtoRoutes);
+app.use('/categorias', categoriaRoutes);
+app.use('/pedidos', pedidoRoutes);
+
+// Seus arquivos de imagem estática (se necessário)
+app.use('/uploads', express.static('uploads'));
+
+app.listen(3000, () => console.log('Servidor rodando na porta 3000'));
