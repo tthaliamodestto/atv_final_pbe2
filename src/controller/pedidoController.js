@@ -1,5 +1,3 @@
-import { Pedido } from "../models/Pedido.js";
-import { ItenPedido } from "../models/ItensPedido.js";
 import { statusPed } from "../enums/statusPedido.js";
 import pedidoRepository from "../repositories/pedidoRepository.js";
 
@@ -36,7 +34,8 @@ const pedidoController = {
             const { idItemPedido } = req.params;
             const { quantidade } = req.body;
 
-            if (!quantidade || quantidade <= 0) {
+            // Correção: Garante que é um número e que não é um texto inválido (NaN)
+            if (!quantidade || isNaN(quantidade) || quantidade <= 0) {
                 return res.status(400).json({ message: "Quantidade inválida para atualização." });
             }
 

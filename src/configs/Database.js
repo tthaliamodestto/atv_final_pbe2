@@ -85,7 +85,7 @@ export async function initializeDatabase() {
         `);
 
         await tempConnection.query(`
-            CREATE TABLE IF NOT EXISTS Pedidos (
+            CREATE TABLE IF NOT EXISTS pedidos (
                 IdPedido INT AUTO_INCREMENT PRIMARY KEY,
                 ValorTotal DECIMAL(10,2) NOT NULL,
                 StatusPedido ENUM('Aberto','Finalizado','Pendente'),

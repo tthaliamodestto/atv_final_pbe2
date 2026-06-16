@@ -1,4 +1,4 @@
-import { connection } from '../configs/Database.js'
+import { connection } from '../configs/Database.js';
 import { ItenPedido } from '../models/ItensPedido.js';
 import { Pedido } from '../models/Pedido.js';
 
@@ -15,8 +15,12 @@ const pedidoRepository = {
                     [item.idProduto]
                 );
 
-                if (produto.length === 0) throw new Error(`Produto ${item.idProduto} não encontrado.`);
-                if (produto[0].Estoque < item.quantidade) throw new Error(`Estoque insuficiente para o produto ${item.idProduto}.`);
+                if (produto.length === 0) {
+                    throw new Error(`Produto ${item.idProduto} não encontrado.`);
+                }
+                if (produto[0].Estoque < item.quantidade) {
+                    throw new Error(`Estoque insuficiente para o produto ${item.idProduto}.`);
+                }
 
                 itensdoPedido.push({
                     idProduto: item.idProduto,
@@ -67,8 +71,12 @@ const pedidoRepository = {
                     [item.idProduto]
                 );
 
-                if (produto.length === 0) throw new Error(`Produto ${item.idProduto} não encontrado.`);
-                if (produto[0].Estoque < item.quantidade) throw new Error(`Estoque insuficiente para o produto ${item.idProduto}.`);
+                if (produto.length === 0) {
+                    throw new Error(`Produto ${item.idProduto} não encontrado.`);
+                }
+                if (produto[0].Estoque < item.quantidade) {
+                    throw new Error(`Estoque insuficiente para o produto ${item.idProduto}.`);
+                }
 
                 itensdoPedido.push({
                     idProduto: item.idProduto,
@@ -113,14 +121,13 @@ const pedidoRepository = {
             await conn.beginTransaction();
 
             const [itemAtual] = await conn.execute(
-                `SELECT IdPedido, IdProduto, Quantidade, PrecoUnitario FROM ItensPedido WHERE IdItemPedido = ?;`,
+                'SELECT IdPedido, IdProduto, Quantidade, PrecoUnitario FROM ItensPedido WHERE IdItemPedido = ?;',
                 [idItemPedido]
             );
 
-            if (itemAtual.length === 0) throw new Error("Item não encontrado");
+            if (itemAtual.length === 0) throw new Error('Item não encontrado');
 
             const item = itemAtual[0];
-
             const quantidadeFinal = quantidade - item.Quantidade;
 
             if (quantidadeFinal !== 0) {
@@ -129,12 +136,12 @@ const pedidoRepository = {
                         'SELECT Estoque FROM Produtos WHERE IdProduto = ?',
                         [item.IdProduto]
                     );
-                    if (produto.length === 0) throw new Error("Produto não encontrado.");
-                    if (produto[0].Estoque < quantidadeFinal) throw new Error("Estoque insuficiente para aplicar essa alteração.");
+                    if (produto.length === 0) throw new Error('Produto não encontrado.');
+                    if (produto[0].Estoque < quantidadeFinal) throw new Error('Estoque insuficiente para aplicar essa alteração.');
                 }
 
                 await conn.execute(
-                    `UPDATE Produtos SET Estoque = Estoque - ? WHERE IdProduto = ?;`,
+                    'UPDATE Produtos SET Estoque = Estoque - ? WHERE IdProduto = ?;',
                     [quantidadeFinal, item.IdProduto]
                 );
             }
@@ -144,12 +151,12 @@ const pedidoRepository = {
             const diferencaValor = valorNovo - valorAntigo;
 
             await conn.execute(
-                `UPDATE ItensPedido SET Quantidade = ? WHERE IdItemPedido = ?;`,
+                'UPDATE ItensPedido SET Quantidade = ? WHERE IdItemPedido = ?;',
                 [quantidade, idItemPedido]
             );
 
             await conn.execute(
-                `UPDATE Pedidos SET ValorTotal = ValorTotal + ? WHERE IdPedido = ?;`,
+                'UPDATE Pedidos SET ValorTotal = ValorTotal + ? WHERE IdPedido = ?;',
                 [diferencaValor, item.IdPedido]
             );
 
@@ -169,32 +176,32 @@ const pedidoRepository = {
             await conn.beginTransaction();
 
             const [itemAtual] = await conn.execute(
-                `SELECT IdPedido, IdProduto, Quantidade, PrecoUnitario FROM ItensPedido WHERE IdItemPedido = ?;`,
+                'SELECT IdPedido, IdProduto, Quantidade, PrecoUnitario FROM ItensPedido WHERE IdItemPedido = ?;',
                 [idItemPedido]
             );
 
-            if (itemAtual.length === 0) throw new Error("Item não encontrado");
+            if (itemAtual.length === 0) throw new Error('Item não encontrado');
 
             const item = itemAtual[0];
             const valorTotalItem = item.Quantidade * item.PrecoUnitario;
 
             await conn.execute(
-                `UPDATE Produtos SET Estoque = Estoque + ? WHERE IdProduto = ?;`,
+                'UPDATE Produtos SET Estoque = Estoque + ? WHERE IdProduto = ?;',
                 [item.Quantidade, item.IdProduto]
             );
 
             await conn.execute(
-                `DELETE FROM ItensPedido WHERE IdItemPedido = ?;`,
+                'DELETE FROM ItensPedido WHERE IdItemPedido = ?;',
                 [idItemPedido]
             );
 
             await conn.execute(
-                `UPDATE Pedidos SET ValorTotal = ValorTotal - ? WHERE IdPedido = ?;`,
+                'UPDATE Pedidos SET ValorTotal = ValorTotal - ? WHERE IdPedido = ?;',
                 [valorTotalItem, item.IdPedido]
             );
 
             await conn.commit();
-            return { idPedido: item.IdPedido, message: "Item removido e estoque devolvido!" };
+            return { idPedido: item.IdPedido, message: 'Item removido e estoque devolvido!' };
         } catch (error) {
             await conn.rollback();
             throw error;
@@ -210,12 +217,10 @@ const pedidoRepository = {
             const [result] = await conn.execute(sql, [statusPedido, idPedido]);
 
             if (result.affectedRows === 0) {
-                throw new Error("Pedido não encontrado");
+                throw new Error('Pedido não encontrado');
             }
 
-            return {
-                message: "Status atualizado com sucesso!", idPedido, statusPedido
-            };
+            return { message: 'Status atualizado com sucesso!', idPedido, statusPedido };
         } catch (error) {
             throw error;
         } finally {
@@ -234,7 +239,8 @@ const pedidoRepository = {
         `;
         const [rows] = await connection.execute(sql);
         return rows;
-    }, 
+    },
+
     deletar: async (idPedido) => {
         const conn = await connection.getConnection();
         try {
@@ -270,10 +276,7 @@ const pedidoRepository = {
             );
 
             await conn.commit();
-            return { 
-                idPedidoDeletado: idPedido, 
-                message: "Pedido removido e estoque devolvido com sucesso!" 
-            };
+            return { idPedidoDeletado: idPedido, message: 'Pedido removido e estoque devolvido com sucesso!' };
         } catch (error) {
             await conn.rollback();
             throw error;
