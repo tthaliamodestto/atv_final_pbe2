@@ -26,7 +26,6 @@ const pedidoController = {
                 });
             }
 
-            // VALIDAÇÃO 2: A lista de itens veio vazia?
             if (!itens || !Array.isArray(itens) || itens.length === 0) {
                 return res.status(400).json({ message: "A lista de itens não pode estar vazia." });
             }
