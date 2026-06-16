@@ -8,7 +8,7 @@ pedidoRoutes.get('/', pedidoController.selecionar);
 pedidoRoutes.put('/:idPedido', pedidoController.editar); 
 pedidoRoutes.delete('/:idPedido', pedidoController.deletar); 
 
-pedidoRoutes.post('/:idPedido/itens', pedidoController.criarItens);
+pedidoRoutes.post('/pedidos/:idPedido/itens', pedidoController.criarItens);
 pedidoRoutes.put('/itens/:idItemPedido', pedidoController.editarItens);
 pedidoRoutes.delete('/itens/:idItemPedido', pedidoController.deletarItens);
 

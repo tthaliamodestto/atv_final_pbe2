@@ -4,6 +4,7 @@ import { Pedido } from '../models/Pedido.js';
 
 const pedidoRepository = {
     criar: async (itens, statusInicial) => {
+
         const conn = await connection.getConnection();
         try {
             await conn.beginTransaction();

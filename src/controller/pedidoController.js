@@ -20,11 +20,26 @@ const pedidoController = {
             const { idPedido } = req.params;
             const { itens } = req.body;
 
+            if (!idPedido || isNaN(idPedido)) {
+                return res.status(400).json({ 
+                    message: `Erro na requisição: O parâmetro 'idPedido' informado (${idPedido}) é inválido.` 
+                });
+            }
+
+            // VALIDAÇÃO 2: A lista de itens veio vazia?
+            if (!itens || !Array.isArray(itens) || itens.length === 0) {
+                return res.status(400).json({ message: "A lista de itens não pode estar vazia." });
+            }
+
             const result = await pedidoRepository.criarItens(idPedido, itens);
             
             res.status(201).json({ message: 'Itens adicionados ao pedido com sucesso', result });
         } catch (error) {
             console.error(error);
+            // Trata o erro amigavelmente se o repositório não achar o ID no banco
+            if (error.message.includes("não encontrado")) {
+                return res.status(404).json({ message: error.message });
+            }
             res.status(500).json({ message: 'Erro ao adicionar itens ao pedido', errorMessage: error.message });
         }
     },
@@ -34,14 +49,13 @@ const pedidoController = {
             const { idItemPedido } = req.params;
             const { quantidade } = req.body;
 
-            // Correção: Garante que é um número e que não é um texto inválido (NaN)
             if (!quantidade || isNaN(quantidade) || quantidade <= 0) {
                 return res.status(400).json({ message: "Quantidade inválida para atualização." });
             }
 
             const result = await pedidoRepository.editarItens(idItemPedido, quantidade);
             
-            res.status(200).json({ message: 'Item do pedido atualizado com sucesso', result });
+            res.status(200).json({ message: 'Item do pedido updated com sucesso', result });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Erro ao editar item', errorMessage: error.message });
