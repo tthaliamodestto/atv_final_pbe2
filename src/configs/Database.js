@@ -52,13 +52,13 @@ export async function initializeDatabase() {
 
         const dbName = process.env.DB_DATABASE || 'ATV_FINAL_PBE2';
 
-
+        await tempConnection.query(`DROP DATABASE IF EXISTS \`${dbName}\`;`);
         await tempConnection.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\`;`);
         await tempConnection.query(`USE \`${dbName}\`;`);
 
 
         await tempConnection.query(`
-            CREATE TABLE IF NOT EXISTS Categorias (
+            CREATE TABLE IF NOT EXISTS categorias (
             IdCategoria INT AUTO_INCREMENT PRIMARY KEY,
             NomeCategoria VARCHAR(100) NOT NULL,
             Descricao VARCHAR(255),
@@ -80,7 +80,7 @@ export async function initializeDatabase() {
 
             CONSTRAINT FK_Produtos_Categorias
                 FOREIGN KEY (IdCategoria)
-                REFERENCES Categorias(IdCategoria)
+                REFERENCES categorias(IdCategoria)
     );
         `);
 
